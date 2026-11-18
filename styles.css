@@ -1,0 +1,24 @@
+/* Custom Styles for Casa Rasa Family Restaurant /
+@layer utilities {
+/ Hide scrollbar for Chrome, Safari and Opera /
+.scrollbar-none::-webkit-scrollbar {
+display: none;
+}
+/ Hide scrollbar for IE, Edge and Firefox /
+.scrollbar-none {
+-ms-overflow-style: none;  / IE and Edge /
+scrollbar-width: none;  / Firefox */
+}
+}
+
+body {
+background-color: #FDFBF7;
+font-family: 'Inter', sans-serif;
+}
+
+/* Smooth transitions for modals and drawers */
+.transition-transform {
+transition-property: transform;
+transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+transition-duration: 300ms;
+}

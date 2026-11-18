@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Casa Rasa Family Restaurant | Taliparamba</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        casared: '#8B2613',
+                        casadark: '#521509',
+                        casagold: '#D4AF37',
+                        casacream: '#FDFBF7'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-casacream text-gray-800 font-sans min-p-0 m-0">
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-gray-900 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center space-x-3">
+        <i id="toast-icon" class="fa-solid fa-check-circle text-emerald-400 text-lg"></i>
+        <span id="toast-message" class="text-sm font-medium">Item added to cart!</span>
+    </div>
+
+    <!-- Navigation Bar -->
+    <header class="sticky top-0 z-40 bg-casadark text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-casared p-2 rounded-xl border border-casagold/30 flex items-center justify-center">
+                    <i class="fa-solid fa-utensils text-casagold text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg sm:text-xl font-bold tracking-wider text-casagold" data-en="CASA RASA" data-ml="കാസ റാസ">CASA RASA</h1>
+                    <p class="text-xs text-gray-300" data-en="Family Restaurant • Taliparamba" data-ml="ഫാമിലി റെസ്റ്റോറന്റ് • തളിപ്പറമ്പ്">Family Restaurant • Taliparamba</p>
+                </div>
+            </div>
+            
+            <nav class="hidden lg:flex items-center space-x-6 text-sm font-medium">
+                <a href="#menu" class="hover:text-casagold transition" data-en="Menu" data-ml="മെനു">Menu</a>
+                <a href="#reservation" class="hover:text-casagold transition" data-en="Book Table" data-ml="ടേബിൾ ബുക്ക് ചെയ്യുക">Book Table</a>
+                <a href="#reviews" class="hover:text-casagold transition" data-en="Reviews" data-ml="അഭിപ്രായങ്ങൾ">Reviews</a>
+                <a href="#about" class="hover:text-casagold transition" data-en="About Us" data-ml="ഞങ്ങളെക്കുറിച്ച്">About Us</a>
+            </nav>
+
+            <div class="flex items-center space-x-2 sm:space-x-3">
+                <!-- Language Toggle -->
+                <button onclick="toggleLanguage()" class="bg-white/10 hover:bg-white/20 text-casagold px-2.5 py-2 rounded-xl text-xs font-semibold transition border border-casagold/30 flex items-center space-x-1" title="Switch Language">
+                    <i class="fa-solid fa-globe text-xs"></i>
+                    <span id="lang-label">മലയാളം</span>
+                </button>
+
+                <!-- Customer Profile Button -->
+                <button onclick="openProfileModal()" class="bg-white/10 hover:bg-white/20 text-white px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold transition border border-white/20 flex items-center space-x-1.5" title="My Account">
+                    <i class="fa-solid fa-user text-casagold"></i>
+                    <span class="hidden sm:inline" data-en="Account" data-ml="അക്കൗണ്ട്">Account</span>
+                </button>
+
+                <!-- Admin Button (Clean Lock Icon without showing password) -->
+                <button onclick="openAdminLogin()" class="bg-white/10 hover:bg-white/20 text-casagold px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold transition border border-casagold/30 flex items-center space-x-1.5" title="Admin Portal">
+                    <i class="fa-solid fa-lock text-xs"></i>
+                    <span class="hidden sm:inline" data-en="Admin" data-ml="അഡ്മിൻ">Admin</span>
+                </button>
+
+                <!-- Cart Button -->
+                <button onclick="toggleCart()" class="relative bg-casared hover:bg-red-800 text-white px-3.5 py-2 rounded-xl text-sm font-semibold transition shadow-lg flex items-center space-x-2">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="hidden sm:inline" data-en="Cart" data-ml="കാർട്ട്">Cart</span>
+                    <span id="cart-badge" class="absolute -top-2 -right-2 bg-casagold text-casadark text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center shadow-md">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative bg-gradient-to-r from-casadark via-[#6d1e0d] to-casadark text-white py-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#D4AF37_1px,transparent_1px)] [background-size:16px_16px]"></div>
+        <div class="max-w-7xl mx-auto relative z-10 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            <div class="space-y-4 text-center md:text-left">
+                <span class="inline-block bg-casagold/20 text-casagold border border-casagold/40 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-widest" data-en="Authentic Arabian & Chinese Delicacies" data-ml="ആധികാരിക അറേബ്യൻ & ചൈനീസ് വിഭവങ്ങൾ">Authentic Arabian & Chinese Delicacies</span>
+                <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight">
+                    <span data-en="Experience Real" data-ml="ആസ്വദിക്കൂ രുചികരമായ">Experience Real</span> <span class="text-casagold" data-en="Mandi & Platters" data-ml="കുഴിമന്തി & പ്ലാറ്ററുകൾ">Mandi & Platters</span>
+                </h2>
+                <p class="text-gray-300 text-sm sm:text-base max-w-lg mx-auto md:mx-0" data-en="Welcome to Casa Rasa Taliparamba! Enjoy authentic Kuzhimandi, Platters, Grills, Biriyani, and Chinese items exactly from our menu. Order online via WhatsApp with GPay or Cash on Delivery." data-ml="തളിപ്പറമ്പ് കാസ റാസയിലേക്ക് സ്വാഗതം! കുഴിമന്തി, പ്ലാറ്ററുകൾ, ഗ്രില്ലുകൾ, ബിരിയാണി എന്നിവ ഓർഡർ ചെയ്യൂ.">Welcome to Casa Rasa Taliparamba! Enjoy authentic Kuzhimandi, Platters, Grills, Biriyani, and Chinese items exactly from our menu. Order online via WhatsApp with GPay or Cash on Delivery.</p>
+                <div class="pt-2 flex flex-wrap justify-center md:justify-start gap-4">
+                    <a href="#menu" class="bg-casagold hover:bg-yellow-500 text-casadark font-bold px-6 py-3 rounded-xl shadow-lg transition flex items-center space-x-2">
+                        <span data-en="Order Now" data-ml="ഓർഡർ ചെയ്യൂ">Order Now</span>
+                        <i class="fa-solid fa-arrow-down"></i>
+                    </a>
+                    <a href="#reservation" class="bg-white/10 hover:bg-white/20 text-white font-semibold px-6 py-3 rounded-xl transition border border-white/20 flex items-center space-x-2">
+                        <i class="fa-solid fa-chair text-casagold"></i>
+                        <span data-en="Book a Table" data-ml="ടേബിൾ ബുക്ക് ചെയ്യാം">Book a Table</span>
+                    </a>
+                </div>
+            </div>
+            <div class="flex justify-center">
+                <div class="relative w-full max-w-md bg-white/5 p-4 rounded-3xl border border-casagold/20 backdrop-blur-sm shadow-2xl">
+                    <div class="rounded-2xl overflow-hidden shadow-md bg-casadark h-64 sm:h-72 flex items-center justify-center relative">
+                        <img src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=800&q=80" alt="Mandi Platter" class="w-full h-full object-cover opacity-90">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-6">
+                            <div>
+                                <span class="bg-casared text-white text-xs px-2.5 py-1 rounded-lg font-bold" data-en="Chef Special" data-ml="ഷെഫ് സ്പെഷ്യൽ">Chef Special</span>
+                                <h3 class="text-white font-bold text-xl mt-1">Casa Rasa Non-Veg Platter</h3>
+                                <p class="text-gray-300 text-xs">₹1550 • <span data-en="Authentic Arabian Menu" data-ml="സ്പെഷ്യൽ അറേബ്യൻ മെനു">Authentic Arabian Menu</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content & Menu Search -->
+    <main id="menu" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+            <div>
+                <h3 class="text-2xl sm:text-3xl font-bold text-casadark" data-en="Complete Restaurant Menu" data-ml="റെസ്റ്റോറന്റ് മെനു">Complete Restaurant Menu</h3>
+                <p class="text-gray-600 text-sm" data-en="Exact dishes from Casa Rasa menu photos. Add to cart & order directly!" data-ml="മെനുവിലുള്ള എല്ലാ സ്വാദിഷ്ടമായ വിഭവങ്ങളും ഇവിടെ ലഭ്യമാണ്.">Exact dishes from Casa Rasa menu photos. Add to cart & order directly!</p>
+            </div>
+            <div class="w-full md:w-72 relative">
+                <input type="text" id="search-input" oninput="filterMenu()" placeholder="Search dishes (e.g. Mandi, Beef)..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 focus:outline-none focus:border-casared text-sm bg-white shadow-sm">
+                <i class="fa-solid fa-search absolute left-3.5 top-3.5 text-gray-400 text-sm"></i>
+            </div>
+        </div>
+
+        <!-- Category Filter Tabs -->
+        <div id="category-tabs" class="flex overflow-x-auto pb-4 mb-8 space-x-2 scrollbar-none">
+            <button onclick="switchCategory('All')" class="cat-btn px-5 py-2 rounded-xl text-sm font-semibold transition bg-casared text-white shadow-sm whitespace-nowrap" data-en="All Items" data-ml="എല്ലാ വിഭവങ്ങളും">All Items</button>
+            <button onclick="switchCategory('Kuzhimandi')" class="cat-btn px-5 py-2 rounded-xl text-sm font-semibold transition bg-white text-gray-700 hover:bg-gray-100 shadow-sm whitespace-nowrap" data-en="Kuzhimandi" data-ml="കുഴിമന്തി">Kuzhimandi</button>
+            <button onclick="switchCategory('Platers')" class="cat-btn px-5 py-2 rounded-xl text-sm font-semibold transition bg-white text-gray-700 hover:bg-gray-100 shadow-sm whitespace-nowrap" data-en="Platers" data-ml="പ്ലാറ്ററുകൾ">Platers</button>
+            <button onclick="switchCategory('Arabic Grills')" class="cat-btn px-5 py-2 rounded-xl text-sm font-semibold transition bg-white text-gray-700 hover:bg-gray-100 shadow-sm whitespace-nowrap" data-en="Arabic Grills" data-ml="അറേബ്യൻ ഗ്രില്ലുകൾ">Arabic Grills</button>
+            <button onclick="switchCategory('Tandoori Tikka')" class="cat-btn px-5 py-2 rounded-xl text-sm font-semibold transition bg-white text-gray-700 hover:bg-gray-100 shadow-sm whitespace-nowrap" data-en="Tandoori Tikka" data-ml="തന്തൂരി ടിക്ക">Tandoori Tikka</button>
+            <button onclick="switchCategory('Soups & Salads')" class="cat-btn px-5 py-2 rounded-xl text-sm font-semibold transition bg-white text-gray-700 hover:bg-gray-100 shadow-sm whitespace-nowrap" data-en="Soups & Salads" data-ml="സൂപ്പ് & സാലഡ്">Soups & Salads</button>
+            <button onclick="switchCategory('Starters')" class="cat-btn px-5 py-2 rounded-xl text-sm font-semibold transition bg-white text-gray-700 hover:bg-gray-100 shadow-sm whitespace-nowrap" data-en="Starters" data-ml="സ്റ്റാർട്ടേഴ്സ്">Starters</button>
+            <button onclick="switchCategory('Beef')" class="cat-btn px-5 py-2 rounded-xl text-sm font-semibold transition bg-white text-gray-700 hover:bg-gray-100 shadow-sm whitespace-nowrap" data-en="Beef Items" data-ml="ബീഫ് വിഭവങ്ങൾ">Beef Items</button>
+            <button onclick="switchCategory('Prawns')" class="cat-btn px-5 py-2 rounded-xl text-sm font-semibold transition bg-white text-gray-700 hover:bg-gray-100 shadow-sm whitespace-nowrap" data-en="Prawns" data-ml="ചെമ്മീൻ">Prawns</button>
+            <button onclick="switchCategory('Rice & Noodles')" class="cat-btn px-5 py-2 rounded-xl text-sm font-semibold transition bg-white text-gray-700 hover:bg-gray-100 shadow-sm whitespace-nowrap" data-en="Rice & Noodles" data-ml="റൈസ് & നൂഡിൽസ്">Rice & Noodles</button>
+            <button onclick="switchCategory('Chinese Gravy')" class="cat-btn px-5 py-2 rounded-xl text-sm font-semibold transition bg-white text-gray-700 hover:bg-gray-100 shadow-sm whitespace-nowrap" data-en="Chinese Gravy" data-ml="ചൈനീസ് ഗ്രേവി">Chinese Gravy</button>
+            <button onclick="switchCategory('Chicken')" class="cat-btn px-5 py-2 rounded-xl text-sm font-semibold transition bg-white text-gray-700 hover:bg-gray-100 shadow-sm whitespace-nowrap" data-en="Chicken Gravy" data-ml="ചിക്കൻ ഗ്രേവി">Chicken Gravy</button>
+            <button onclick="switchCategory('Mutton')" class="cat-btn px-5 py-2 rounded-xl text-sm font-semibold transition bg-white text-gray-700 hover:bg-gray-100 shadow-sm whitespace-nowrap" data-en="Mutton" data-ml="മട്ടൺ">Mutton</button>
+            <button onclick="switchCategory('Special Biriyani')" class="cat-btn px-5 py-2 rounded-xl text-sm font-semibold transition bg-white text-gray-700 hover:bg-gray-100 shadow-sm whitespace-nowrap" data-en="Special Biriyani" data-ml="സ്പെഷ്യൽ ബിരിയാണി">Special Biriyani</button>
+            <button onclick="switchCategory('Indian Gravy')" class="cat-btn px-5 py-2 rounded-xl text-sm font-semibold transition bg-white text-gray-700 hover:bg-gray-100 shadow-sm whitespace-nowrap" data-en="Indian Gravy & Veg" data-ml="ഇന്ത്യൻ & വെജ്">Indian Gravy & Veg</button>
+            <button onclick="switchCategory('Breads')" class="cat-btn px-5 py-2 rounded-xl text-sm font-semibold transition bg-white text-gray-700 hover:bg-gray-100 shadow-sm whitespace-nowrap" data-en="Breads & Dips" data-ml="ബ്രെഡ്സ് & ഡിപ്സ്">Breads & Dips</button>
+        </div>
+
+        <!-- Menu Grid -->
+        <div id="menu-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Populated via JavaScript -->
+        </div>
+    </main>
+
+    <!-- Table Reservation Section -->
+    <section id="reservation" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="bg-gradient-to-r from-casadark to-[#7a220f] rounded-3xl p-8 sm:p-12 text-white shadow-xl grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            <div class="space-y-4">
+                <span class="bg-casagold/20 text-casagold border border-casagold/40 text-xs font-semibold px-3 py-1 rounded-full uppercase" data-en="Table Booking" data-ml="ടേബിൾ ബുക്കിംഗ്">Table Booking</span>
+                <h3 class="text-2xl sm:text-4xl font-extrabold" data-en="Reserve Your Table at Casa Rasa" data-ml="കാസ റാസയിൽ നിങ്ങളുടെ ടേബിൾ റിസർവ് ചെയ്യൂ">Reserve Your Table at Casa Rasa</h3>
+                <p class="text-gray-300 text-sm" data-en="Plan your family get-together or dining experience in advance. Enjoy quick service and great ambiance." data-ml="നിങ്ങളുടെ കുടുംബത്തോടൊപ്പമുള്ള അത്താഴം മുൻകൂട്ടി പ്ലാൻ ചെയ്യാം.">Plan your family get-together or dining experience in advance. Enjoy quick service and great ambiance.</p>
+                <div class="flex items-center space-x-4 text-xs text-casagold pt-2">
+                    <span><i class="fa-solid fa-check mr-1"></i> Instant Confirmation</span>
+                    <span><i class="fa-solid fa-check mr-1"></i> AC & Non-AC Seating</span>
+                </div>
+            </div>
+            <div class="bg-white text-gray-800 p-6 sm:p-8 rounded-2xl shadow-2xl space-y-4">
+                <h4 class="font-bold text-lg text-casadark border-b pb-2" data-en="Book a Table Form" data-ml="ടേബിൾ ബുക്കിംഗ് ഫോം">Book a Table Form</h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Your Name *</label>
+                        <input type="text" id="res-name" placeholder="Full name" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:border-casared">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Phone Number *</label>
+                        <input type="tel" id="res-phone" placeholder="9876543210" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:border-casared">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Date *</label>
+                        <input type="date" id="res-date" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:border-casared bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Time *</label>
+                        <input type="time" id="res-time" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:border-casared bg-white">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-700 mb-1">Number of Guests *</label>
+                    <select id="res-guests" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:border-casared bg-white">
+                        <option value="2 Guests">2 Guests (Couple)</option>
+                        <option value="4 Guests">4 Guests (Family)</option>
+                        <option value="6 Guests">6 Guests (Group)</option>
+                        <option value="10+ Guests">10+ Guests (Party)</option>
+                    </select>
+                </div>
+                <button onclick="submitReservation()" class="w-full bg-casared hover:bg-red-800 text-white font-bold py-3 rounded-xl transition shadow" data-en="Confirm Table Reservation" data-ml="റിസർവേഷൻ സ്ഥിരീകരിക്കുക">Confirm Table Reservation</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Google Reviews Section -->
+    <section id="reviews" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="text-center max-w-2xl mx-auto mb-10 space-y-2">
+            <span class="bg-casared/10 text-casared border border-casared/30 text-xs font-semibold px-3 py-1 rounded-full uppercase" data-en="Customer Reviews" data-ml="ഉപഭോക്താക്കളുടെ അഭിപ്രായങ്ങൾ">Customer Reviews</span>
+            <h3 class="text-3xl font-extrabold text-casadark">3.5 ⭐ (632+ Google Reviews)</h3>
+            <p class="text-gray-600 text-sm" data-en="Diners love our delicious Mandi, reasonable rates, good ambiance, and excellent service." data-ml="ഞങ്ങളുടെ സ്വാദിഷ്ടമായ മന്തിയും മികച്ച സേവനവും ഉപഭോക്താക്കൾ ഇഷ്ടപ്പെടുന്നു.">Diners love our delicious Mandi, reasonable rates, good ambiance, and excellent service.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-3">
+                <div class="flex items-center text-amber-400 text-sm">
+                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                </div>
+                <p class="text-xs text-gray-700 italic">"Mandi is so delicious. Nice ambience. Great service staff at Casa Rasa Taliparamba!"</p>
+                <p class="text-xs font-bold text-casadark">— Mohammed Aslam (Google Review)</p>
+            </div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-3">
+                <div class="flex items-center text-amber-400 text-sm">
+                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+                </div>
+                <p class="text-xs text-gray-700 italic">"Neat and clean area, tasty food, and especially friendly and funny staff. Highly recommended!"</p>
+                <p class="text-xs font-bold text-casadark">— Fathima Zahra (Google Review)</p>
+            </div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-3">
+                <div class="flex items-center text-amber-400 text-sm">
+                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                </div>
+                <p class="text-xs text-gray-700 italic">"Satisfying everything. Tasty food. Excellent service and great platters for families."</p>
+                <p class="text-xs font-bold text-casadark">— Praveen Kumar (Google Review)</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cart Drawer / Modal -->
+    <div id="cart-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex justify-end transition-all">
+        <div class="bg-white w-full max-w-md h-full shadow-2xl flex flex-col justify-between transform transition-transform duration-300 translate-x-full" id="cart-content-box">
+            <!-- Cart Header -->
+            <div class="p-5 bg-casadark text-white flex items-center justify-between border-b border-casagold/20">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-bag-shopping text-casagold"></i>
+                    <h3 class="font-bold text-lg" data-en="Your Order Cart" data-ml="നിങ്ങളുടെ കാർട്ട്">Your Order Cart</h3>
+                </div>
+                <button onclick="toggleCart()" class="text-gray-300 hover:text-white p-2">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Cart Items List -->
+            <div id="cart-items" class="flex-1 overflow-y-auto p-5 space-y-4 divide-y divide-gray-100">
+                <!-- Dynamically filled -->
+            </div>
+
+            <!-- Cart Summary & Checkout Inputs -->
+            <div class="p-5 bg-gray-50 border-t border-gray-200 space-y-4">
+                <div class="space-y-3">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-gray-500" data-en="Delivery & Billing Details" data-ml="ഡെലിവറി വിവരങ്ങൾ">Delivery & Billing Details</h4>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Your Name *</label>
+                        <input type="text" id="cust-name" placeholder="Enter your full name" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:border-casared">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">WhatsApp Phone Number *</label>
+                        <input type="tel" id="cust-phone" placeholder="9876543210" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:border-casared">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Location / Place *</label>
+                            <input type="text" id="cust-location" placeholder="e.g. Velapuram, Taliparamba" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:border-casared">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Delivery Option *</label>
+                            <select id="order-type" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:border-casared bg-white">
+                                <option value="Home Delivery">Home Delivery</option>
+                                <option value="Takeaway / Parcel">Takeaway / Parcel</option>
+                                <option value="Dining">Dining at Restaurant</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Payment Method *</label>
+                            <select id="payment-method" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:border-casared bg-white">
+                                <option value="Cash on Delivery / Counter">Cash on Delivery</option>
+                                <option value="GPay / UPI Online Payment">GPay / UPI Payment</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Discount Coupon</label>
+                            <div class="flex space-x-1">
+                                <input type="text" id="coupon-code" placeholder="CASA10" class="w-full px-2 py-2 text-xs rounded-lg border border-gray-300 uppercase">
+                                <button onclick="applyCoupon()" class="bg-gray-800 text-white px-2 py-1 text-xs rounded-lg font-bold">Apply</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-1.5 pt-2 border-t border-gray-200 text-sm">
+                    <div class="flex justify-between text-gray-600">
+                        <span>Subtotal</span>
+                        <span id="cart-subtotal">₹0</span>
+                    </div>
+                    <div class="flex justify-between text-gray-600">
+                        <span>Discount</span>
+                        <span id="cart-discount" class="text-emerald-600 font-bold">-₹0</span>
+                    </div>
+                    <div class="flex justify-between text-gray-600">
+                        <span>Delivery Charge</span>
+                        <span id="cart-delivery">₹40</span>
+                    </div>
+                    <div class="flex justify-between font-bold text-base text-gray-900 pt-1 border-t border-dashed border-gray-300">
+                        <span>Total Bill Amount</span>
+                        <span id="cart-total" class="text-casared">₹0</span>
+                    </div>
+                </div>
+
+                <button onclick="checkoutOrder()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition flex items-center justify-center space-x-2">
+                    <i class="fa-brands fa-whatsapp text-lg"></i>
+                    <span data-en="Send Order to WhatsApp" data-ml="വാട്സാപ്പിലേക്ക് ഓർഡർ അയക്കുക">Send Order to WhatsApp</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Customer Profile / Account Modal -->
+    <div id="profile-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl p-6 relative border border-casagold/30 space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-gray-100">
+                <div class="flex items-center space-x-2">
+                    <div class="bg-casadark text-casagold p-2 rounded-xl">
+                        <i class="fa-solid fa-user text-sm"></i>
+                    </div>
+                    <h3 class="font-bold text-lg text-casadark" data-en="Customer Profile & Orders" data-ml="കസ്റ്റമർ പ്രൊഫൈൽ">Customer Profile & Orders</h3>
+                </div>
+                <button onclick="closeProfileModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div class="space-y-3">
+                <div class="bg-casacream p-4 rounded-xl border border-gray-200 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs text-gray-500">Loyalty Points Earned</p>
+                        <h4 class="font-extrabold text-xl text-casared" id="loyalty-points">120 pts</h4>
+                    </div>
+                    <span class="bg-casagold/20 text-casadark text-xs font-bold px-3 py-1 rounded-full">Gold Member</span>
+                </div>
+                <div>
+                    <h4 class="font-bold text-sm text-casadark mb-2">Recent Order History</h4>
+                    <div id="customer-orders-list" class="space-y-2 max-h-48 overflow-y-auto">
+                        <p class="text-xs text-gray-500 italic">No recent orders in this session.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div id="admin-login-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 relative border border-casagold/30">
+            <div class="flex items-center justify-between mb-4 pb-3 border-b border-gray-100">
+                <div class="flex items-center space-x-2">
+                    <div class="bg-casadark text-casagold p-2 rounded-xl">
+                        <i class="fa-solid fa-lock text-sm"></i>
+                    </div>
+                    <h3 class="font-bold text-lg text-casadark">Admin Portal Login</h3>
+                </div>
+                <button onclick="closeAdminLogin()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <p class="text-xs text-gray-600 mb-4">Enter secure admin password to open the live admin dashboard.</p>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-gray-700 mb-1">Password</label>
+                    <input type="password" id="admin-pass-input" placeholder="Enter password" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 focus:outline-none focus:border-casared text-sm">
+                </div>
+                <button onclick="verifyAdmin()" class="w-full bg-casadark hover:bg-black text-casagold font-bold py-3 rounded-xl transition shadow-md">
+                    Unlock Dashboard
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard Modal -->
+    <div id="admin-dashboard-modal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-2 sm:p-6">
+        <div class="bg-white w-full max-w-5xl h-[92vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-casagold/40">
+            <div class="bg-casadark text-white p-4 sm:p-5 flex items-center justify-between border-b border-casagold/20">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-casared p-2 rounded-xl">
+                        <i class="fa-solid fa-gauge-high text-casagold"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg text-casagold">Casa Rasa Admin Dashboard</h3>
+                        <p class="text-xs text-gray-300">Sales Reports, Orders, Table Bookings & Menu Management</p>
+                    </div>
+                </div>
+                <button onclick="closeAdminDashboard()" class="text-gray-300 hover:text-white p-2">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            
+            <!-- Admin Tabs Navigation -->
+            <div class="flex overflow-x-auto border-b border-gray-200 bg-gray-100 px-4 pt-3 space-x-2">
+                <button onclick="switchAdminTab('overview')" id="admin-tab-overview" class="px-4 py-2 text-xs sm:text-sm font-bold bg-white text-casadark rounded-t-xl border-t border-x border-gray-200 shadow-sm">
+                    Overview & Stats
+                </button>
+                <button onclick="switchAdminTab('orders')" id="admin-tab-orders" class="px-4 py-2 text-xs sm:text-sm font-semibold text-gray-600 hover:text-casadark rounded-t-xl transition">
+                    Customer Orders (<span id="admin-total-orders-count">0</span>)
+                </button>
+                <button onclick="switchAdminTab('reservations')" id="admin-tab-reservations" class="px-4 py-2 text-xs sm:text-sm font-semibold text-gray-600 hover:text-casadark rounded-t-xl transition">
+                    Table Bookings (<span id="admin-total-res-count">0</span>)
+                </button>
+                <button onclick="switchAdminTab('menu')" id="admin-tab-menu" class="px-4 py-2 text-xs sm:text-sm font-semibold text-gray-600 hover:text-casadark rounded-t-xl transition">
+                    Add / Manage Menu Items
+                </button>
+                <button onclick="switchAdminTab('editmenu')" id="admin-tab-editmenu" class="px-4 py-2 text-xs sm:text-sm font-semibold text-gray-600 hover:text-casadark rounded-t-xl transition">
+                    Edit Menu Card
+                </button>
+            </div>
+
+            <!-- Tab 1: Overview & Reports -->
+            <div id="admin-content-overview" class="flex-1 overflow-y-auto p-6 space-y-6 bg-gray-50">
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+                        <p class="text-xs text-gray-500 uppercase font-semibold">Total Sales</p>
+                        <h4 class="text-2xl font-bold text-casared mt-1" id="stat-total-sales">₹0</h4>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+                        <p class="text-xs text-gray-500 uppercase font-semibold">Total Orders</p>
+                        <h4 class="text-2xl font-bold text-gray-800 mt-1" id="stat-total-orders">0</h4>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+                        <p class="text-xs text-gray-500 uppercase font-semibold">Table Bookings</p>
+                        <h4 class="text-2xl font-bold text-casadark mt-1" id="stat-total-bookings">0</h4>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+                        <p class="text-xs text-gray-500 uppercase font-semibold">Active Customers</p>
+                        <h4 class="text-2xl font-bold text-emerald-600 mt-1" id="stat-total-customers">632+</h4>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 space-y-3">
+                    <h4 class="font-bold text-base text-casadark">Quick Restaurant Control</h4>
+                    <p class="text-xs text-gray-600">You can add new food items, adjust prices, verify table reservations, and inspect live customer orders directly from the tabs above.</p>
+                </div>
+            </div>
+
+            <!-- Tab 2: Orders -->
+            <div id="admin-content-orders" class="flex-1 overflow-y-auto p-4 space-y-4 divide-y divide-gray-100 hidden">
+                <!-- Dynamically populated orders -->
+            </div>
+
+            <!-- Tab 3: Table Reservations -->
+            <div id="admin-content-reservations" class="flex-1 overflow-y-auto p-4 space-y-4 divide-y divide-gray-100 hidden">
+                <!-- Dynamically populated table bookings -->
+            </div>
+
+            <!-- Tab 4: Add Menu Item Form -->
+            <div id="admin-content-menu" class="flex-1 overflow-y-auto p-6 space-y-6 hidden bg-gray-50">
+                <div class="max-w-2xl mx-auto space-y-6">
+                    <!-- Add New Dish Card -->
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 space-y-4">
+                        <h4 class="font-bold text-base text-casadark border-b pb-2 flex items-center space-x-2">
+                            <i class="fa-solid fa-plus-circle text-casared"></i>
+                            <span>Add New Dish & Photo to Menu</span>
+                        </h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-700 mb-1">Dish Name *</label>
+                                <input type="text" id="new-item-name" placeholder="e.g. Special Chicken Fry" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:border-casared">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-700 mb-1">Category *</label>
+                                <select id="new-item-cat" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:border-casared bg-white">
+                                    <option value="Kuzhimandi">Kuzhimandi</option>
+                                    <option value="Platers">Platers</option>
+                                    <option value="Arabic Grills">Arabic Grills</option>
+                                    <option value="Tandoori Tikka">Tandoori Tikka</option>
+                                    <option value="Soups & Salads">Soups & Salads</option>
+                                    <option value="Starters">Starters</option>
+                                    <option value="Beef">Beef Items</option>
+                                    <option value="Prawns">Prawns</option>
+                                    <option value="Rice & Noodles">Rice & Noodles</option>
+                                    <option value="Chinese Gravy">Chinese Gravy</option>
+                                    <option value="Chicken">Chicken Gravy</option>
+                                    <option value="Mutton">Mutton</option>
+                                    <option value="Special Biriyani">Special Biriyani</option>
+                                    <option value="Indian Gravy">Indian Gravy</option>
+                                    <option value="Breads">Breads & Dips</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-700 mb-1">Price (₹) *</label>
+                                <input type="number" id="new-item-price" placeholder="300" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:border-casared">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-700 mb-1">Dish Photo Image URL *</label>
+                                <input type="url" id="new-item-img" placeholder="https://images.unsplash.com/photo-..." class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:border-casared">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Upload Photo File (Optional)</label>
+                            <input type="file" id="new-item-file" accept="image/*" onchange="previewUploadedPhoto(event)" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-casadark file:text-casagold hover:file:bg-black">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Description / Ingredients</label>
+                            <textarea id="new-item-desc" rows="2" placeholder="Delicious spices with tender meat..." class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:border-casared"></textarea>
+                        </div>
+                        <button onclick="addNewDish()" class="w-full bg-casared hover:bg-red-800 text-white font-bold py-2.5 rounded-xl transition shadow">
+                            Add New Dish with Photo to Live Menu
+                        </button>
+                    </div>
+
+                    <!-- Update Existing Dish Photo Card -->
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 space-y-4">
+                        <h4 class="font-bold text-base text-casadark border-b pb-2 flex items-center space-x-2">
+                            <i class="fa-solid fa-image text-casagold"></i>
+                            <span>Update Existing Dish Photo / Image URL</span>
+                        </h4>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Select Dish *</label>
+                            <select id="edit-dish-select" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:border-casared bg-white">
+                                <!-- Populated dynamically -->
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">New Photo Image URL *</label>
+                            <input type="url" id="edit-dish-img" placeholder="https://images.unsplash.com/photo-..." class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:border-casared">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Upload New Photo File (Optional)</label>
+                            <input type="file" id="edit-dish-file" accept="image/*" onchange="previewEditUploadedPhoto(event)" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-casadark file:text-casagold hover:file:bg-black">
+                        </div>
+                        <button onclick="updateDishPhoto()" class="w-full bg-casadark hover:bg-black text-casagold font-bold py-2.5 rounded-xl transition shadow">
+                            Update Dish Photo Instantly
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 5: Edit Menu Card Details (Name, Price, Desc) -->
+            <div id="admin-content-editmenu" class="flex-1 overflow-y-auto p-6 space-y-6 hidden bg-gray-50">
+                <div class="max-w-2xl mx-auto space-y-6">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 space-y-4">
+                        <h4 class="font-bold text-base text-casadark border-b pb-2 flex items-center space-x-2">
+                            <i class="fa-solid fa-pen-to-square text-casared"></i>
+                            <span>Edit Existing Menu Item Details & Prices</span>
+                        </h4>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Select Dish to Edit *</label>
+                            <select id="card-edit-select" onchange="loadDishDetailsForEdit()" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:border-casared bg-white">
+                                <!-- Populated dynamically -->
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-700 mb-1">Dish Name *</label>
+                                <input type="text" id="card-edit-name" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:border-casared">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-700 mb-1">Price (₹) [Default / Full Plate] *</label>
+                                <input type="number" id="card-edit-price" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:border-casared">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Description / Ingredients</label>
+                            <textarea id="card-edit-desc" rows="2" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:border-casared"></textarea>
+                        </div>
+                        <button onclick="saveDishCardEdits()" class="w-full bg-casared hover:bg-red-800 text-white font-bold py-2.5 rounded-xl transition shadow">
+                            Save Menu Item Updates
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer id="about" class="bg-casadark text-white pt-12 pb-8 border-t border-casagold/20 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            <div class="space-y-3">
+                <h4 class="text-casagold font-bold text-lg tracking-wider">CASA RASA FAMILY RESTAURANT</h4>
+                <p class="text-xs text-gray-300 leading-relaxed" data-en="Authentic Arabian Mandi, Tandoori Platters, Grills, Biriyani, and Chinese items in Taliparamba, Kerala." data-ml="തളിപ്പറമ്പിൽ ആധികാരിക അറേബ്യൻ മന്തി, തന്തൂരി പ്ലാറ്ററുകൾ എന്നിവ ലഭ്യമാണ്.">Authentic Arabian Mandi, Tandoori Platters, Grills, Biriyani, and Chinese items in Taliparamba, Kerala.</p>
+            </div>
+            <div class="space-y-2">
+                <h4 class="text-casagold font-bold text-sm tracking-wider uppercase">Contact & Location</h4>
+                <p class="text-xs text-gray-300"><i class="fa-solid fa-location-dot text-casared mr-2"></i>near JFC Fruits Centre, Velapuram, Taliparamba, Kerala 670141</p>
+                <p class="text-xs text-gray-300"><i class="fa-solid fa-phone text-casared mr-2"></i>096458 35050</p>
+                <p class="text-xs text-gray-300"><i class="fa-solid fa-clock text-casared mr-2"></i>Open Daily: 11:00 AM – 11:55 PM</p>
+            </div>
+            <div class="space-y-3">
+                <h4 class="text-casagold font-bold text-sm tracking-wider uppercase">Quick Links</h4>
+                <div class="flex flex-col space-y-1.5 text-xs text-gray-300">
+                    <a href="#menu" class="hover:text-casagold transition">Browse Menu</a>
+                    <a href="#reservation" class="hover:text-casagold transition">Book Table</a>
+                    <a href="#" onclick="toggleCart(); return false;" class="hover:text-casagold transition">View Cart & Checkout</a>
+                    <a href="#" onclick="openAdminLogin(); return false;" class="hover:text-casagold transition">Admin Dashboard</a>
+                </div>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 border-t border-white/10 text-center text-xs text-gray-400">
+            <p>&copy; 2026 Casa Rasa Family Restaurant, Taliparamba. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Floating Support Button -->
+    <a href="https://wa.me/919645835050?text=Hello%20Casa%20Rasa,%20I%20have%20an%20enquiry." target="_blank" class="fixed bottom-6 left-6 z-40 bg-emerald-600 hover:bg-emerald-700 text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center text-2xl transition hover:scale-110" title="Chat on WhatsApp">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+
+    <!-- External JavaScript Application Logic -->
+    <script src="script.js"></script>
+</body>
+</html>
